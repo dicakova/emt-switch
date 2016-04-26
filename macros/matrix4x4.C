@@ -1,4 +1,4 @@
-void matrix4x4(Double_t min=0.2, Double_t max=0.6, Double_t step=0.1) {
+void matrix4x4(Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
 
 // toto budeme menit
 
