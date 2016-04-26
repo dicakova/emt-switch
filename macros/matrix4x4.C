@@ -1,10 +1,5 @@
 void matrix4x4(Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
 
-// toto budeme menit
-
-//ear.Print();
-//eai.Print();
-
   Double_t width = 3.0;
 
   TList *list = new TList();
@@ -44,7 +39,6 @@ void matrix4x4(Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
   g4->Draw("L SAME");
 
   TLegend *leg = new TLegend(0.747318,0.673958,0.83969,0.878125);
-  //leg->SetHeader("The Legend Title");
   leg->AddEntry(g1,"#lambda_{1}","l");
   leg->AddEntry(g2,"#lambda_{2}","l");
   leg->AddEntry(g3,"#lambda_{3}","l");
@@ -79,8 +73,6 @@ a(3,0)=0;
 a(3,1)=mxy;
 a(3,2)=nu01;
 a(3,3)=-nu10-myx;
-
-// a.Print();
 
 TMatrixDEigen ea(a);
 
