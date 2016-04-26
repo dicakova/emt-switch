@@ -1,4 +1,4 @@
-void matrix4x4(Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
+void matrix4x4(Int_t idDataSet = 0,Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
 
   Double_t width = 3.0;
 
@@ -21,17 +21,16 @@ void matrix4x4(Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
   list->Add(g4);
 
   for (Double_t val=min;val<=max;val+=step) {
-    MatrixZuzka(val,list);
+    MatrixZuzka(idDataSet,val,list);
   }
 
-
-  g1->SetTitle("4x4 matrix blok, constant parameters: r_{0x}=2, r_{0y}=4, #nu_{10}=0.1, #mu_{xy}=0.01, #mu_{yx}=0.01");
   g1->GetXaxis()->SetTitle("#nu_{01}");
   g1->GetXaxis()->CenterTitle();
   g1->GetYaxis()->SetTitle("four eigenvalues");
   g1->GetYaxis()->CenterTitle();
 
   TCanvas *c = new TCanvas();
+  if (idDataSet == 1) g1->GetYaxis()->SetRangeUser(-14,2);
 
   g1->Draw("AL");
   g2->Draw("L SAME");
@@ -45,16 +44,24 @@ void matrix4x4(Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
   leg->AddEntry(g4,"#lambda_{4}","l");
   leg->Draw();
 
-  c->SaveAs("pic.pdf");
+  c->SaveAs(Form("pic%d.pdf",idDataSet));
 }
 
-void MatrixZuzka(Double_t nu01=0.3, TList *lg=0) {
+void MatrixZuzka(Int_t idDataSet = 0,Double_t nu01=0.3, TList *lg=0) {
 // fixne 
 Double_t r0x=2;
 Double_t r0y=4;
 Double_t nu10=0.1;
 Double_t mxy=0.01;
 Double_t myx=0.01;
+
+if (idDataSet == 1) {
+  r0x=1.0;
+  r0y=1.5;
+  nu10=0.1;
+  mxy=2.0;
+  myx=1.0;
+}
 
 TMatrixD a(4,4);
 a(0,0)=r0x-nu01;
@@ -81,6 +88,8 @@ const TVectorD ear = ea.GetEigenValuesRe();
 const TVectorD eai = ea.GetEigenValuesIm();
 
 TGraph *g1 = (TGraph*) lg->At(0);
+g1->SetTitle(Form("4x4 matrix blok, constant parameters: r_{0x}=%.1f, r_{0y}=%.1f, #nu_{10}=%.2f, #mu_{xy}=%.2f, #mu_{yx}=%.2f",r0x,r0y,nu10,mxy,myx));
+
 TGraph *g2 = (TGraph*) lg->At(1);
 TGraph *g3 = (TGraph*) lg->At(2);
 TGraph *g4 = (TGraph*) lg->At(3);
