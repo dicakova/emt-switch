@@ -13,7 +13,8 @@ void FixBinning(Int_t nDim, Int_t *bins, Double_t *min, Double_t *max) {
 	}
 }
 
-void test() {
+void test(Int_t projection = 2, Int_t cut = 3, Bool_t is2D = kFALSE,
+		Bool_t save = kFALSE) {
 	gROOT->LoadMacro("EmtMatrix.cxx+");
 
 //	//				    dr     dnu		rho	  gama r/i
@@ -56,61 +57,50 @@ void test() {
 	Int_t mybin;
 
 	TH1::AddDirectory(kFALSE);
-	// IMAGINARY
-//	hs->GetAxis(6)->SetRange(2,2);
-//	TCanvas *c1 = new TCanvas();
-//	for (Int_t i = 1; i <= hs->GetAxis(3)->GetNbins(); i++) {
-////		// mybin = hs->GetAxis(3)->FindBin(0.1);
-////		// hs->GetAxis(3)->SetRange(mybin, mybin);
-//		hs->GetAxis(3)->SetRange(i, i);
-//		hs->GetAxis(6)->SetRange(1, 1);
-//		TH1 * histNu01 = hs->Projection(2);
-//		histNu01->SetStats(0);
-//		histNu01->SetTitle(TString::Format("#nu_{01} for #nu_{10}=%f",hs->GetAxis(3)->GetBinUpEdge(i)).Data());;
-//		histNu01->GetXaxis()->SetTitle("#nu_{01}");
-//		histNu01->GetXaxis()->CenterTitle();
-//		histNu01->GetYaxis()->SetTitle("eigen value");
-//		histNu01->GetYaxis()->CenterTitle();
-//		histNu01->GetYaxis()->SetRangeUser(0.0,1.5);
-//		histNu01->Draw();
-//		c1->SaveAs(TString::Format("/tmp/nu01-nu10_%f.pdf",hs->GetAxis(3)->GetBinUpEdge(i)).Data());
-//	}
 
-	// reset 3rd axis
-	hs->GetAxis(3)->SetRange(1, 0);
-
-//	TCanvas *c2 = new TCanvas();
-//	for (Int_t i = 1; i <= hs->GetAxis(2)->GetNbins(); i++) {
-////		mybin = hs->GetAxis(3)->FindBin(0.1);
-////		hs->GetAxis(3)->SetRange(mybin, mybin);
-//		hs->GetAxis(2)->SetRange(i, i);
-//		hs->GetAxis(6)->SetRange(1, 1);
-//		TH1 * histNu10 = hs->Projection(3);
-//		histNu10->SetStats(0);
-//		histNu10->SetTitle(TString::Format("#nu_{10} for #nu_{01}=%f",hs->GetAxis(2)->GetBinUpEdge(i)).Data());;
-//		histNu10->GetXaxis()->SetTitle("#nu_{10}");
-//		histNu10->GetXaxis()->CenterTitle();
-//		histNu10->GetYaxis()->SetTitle("eigen value");
-//		histNu10->GetYaxis()->CenterTitle();
-//		histNu10->GetYaxis()->SetRangeUser(0.0,1.5);
-//		histNu10->Draw();
-//		c2->SaveAs(TString::Format("/tmp/nu01-nu10_%f.pdf",hs->GetAxis(2)->GetBinUpEdge(i)).Data());
-//	}
-
-	hs->GetAxis(2)->SetRange(1, 0);
-	hs->GetAxis(3)->SetRange(1, 0);
-
-	TCanvas *c3 = new TCanvas();
-	TH2D * histNu01Nu10 = hs->Projection(3,2);
-	histNu01Nu10->SetStats(0);
-	histNu01Nu10->GetXaxis()->SetTitle("#nu_{01}");
-	histNu01Nu10->GetYaxis()->SetTitle("#nu_{10}");
-	hs->GetAxis(6)->SetRange(1, 1);
-	histNu01Nu10->Draw("CONT COL");
-	c3->SaveAs("/tmp/nu01-nu10_2d.pdf");
-//
-//	hs->GetAxis(2)->SetRange(2,2);
-//    hist = hs->Projection(1);
-//    hist->Draw();
-
+	if (!is2D) {
+		// IMAGINARY
+		hs->GetAxis(6)->SetRange(2, 2);
+		TCanvas *c1 = new TCanvas();
+		for (Int_t i = 1; i <= hs->GetAxis(cut)->GetNbins(); i++) {
+//		// mybin = hs->GetAxis(3)->FindBin(0.1);
+//		// hs->GetAxis(cut)->SetRange(mybin, mybin);
+			hs->GetAxis(cut)->SetRange(i, i);
+			hs->GetAxis(6)->SetRange(1, 1);
+			TH1 * histNu01 = hs->Projection(projection);
+			histNu01->SetStats(0);
+			histNu01->SetTitle(
+					TString::Format("#nu_{01} for #nu_{10}=%f",
+							hs->GetAxis(cut)->GetBinUpEdge(i)).Data());
+			;
+			histNu01->GetXaxis()->SetTitle("#nu_{01}");
+			histNu01->GetXaxis()->CenterTitle();
+			histNu01->GetYaxis()->SetTitle("eigen value");
+			histNu01->GetYaxis()->CenterTitle();
+			histNu01->GetYaxis()->SetRangeUser(0.0, 1.5);
+			histNu01->Draw();
+			if (save)
+				c1->SaveAs(
+						TString::Format("/tmp/nu01-nu10_%f.pdf",
+								hs->GetAxis(cut)->GetBinUpEdge(i)).Data());
+			else {
+				c1->Update();
+			}
+		}
+	} else {
+		hs->GetAxis(2)->SetRange(1, 0);
+		hs->GetAxis(3)->SetRange(1, 0);
+		TCanvas *c3 = new TCanvas();
+		TH2D * histNu01Nu10 = hs->Projection(3, 2);
+		histNu01Nu10->SetStats(0);
+		histNu01Nu10->GetXaxis()->SetTitle("#nu_{01}");
+		histNu01Nu10->GetYaxis()->SetTitle("#nu_{10}");
+		hs->GetAxis(6)->SetRange(1, 1);
+		histNu01Nu10->Draw("CONT COL");
+		if (save)
+			c3->SaveAs("/tmp/nu01-nu10_2d.pdf");
+		else {
+			c3->Update();
+		}
+	}
 }
