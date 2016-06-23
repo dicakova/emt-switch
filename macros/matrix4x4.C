@@ -1,3 +1,13 @@
+//#if defined(__MAKECINT__) || defined(__MAKECLING__)
+#ifndef __CINT__
+#include <TList.h>
+#include <TGraph.h>
+#include <TCanvas.h>
+#include <TAxis.h>
+#include <TLegend.h>
+#include <TMatrixDEigen.h>
+#endif
+
 void matrix4x4(Int_t idDataSet = 0,Double_t min=0.1, Double_t max=10.0, Double_t step=0.1) {
 
   Double_t width = 3.0;
@@ -82,7 +92,6 @@ a(3,2)=nu01;
 a(3,3)=-nu10-myx;
 
 TMatrixDEigen ea(a);
-
 
 const TVectorD ear = ea.GetEigenValuesRe();
 const TVectorD eai = ea.GetEigenValuesIm();
