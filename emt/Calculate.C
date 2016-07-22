@@ -32,7 +32,7 @@ void Calculate(const char *output="histogram.root") {
 //	Double_t max[nDim] = { 1, 1.5, 0.1, 10, 2, 1, 2 };
 
 //		nu10		    r0x r0y  nu01 nu10 		mxy myx r/i
-	Int_t bins[nDim] = { 1, 1, 1001, 1001, 1, 1, 2 };
+	Int_t bins[nDim] = { 5, 5, 101, 101, 1, 1, 2 };
 	Double_t min[nDim] = { 0, 0, 0, 0, 0, 0, 1 };
 	Double_t max[nDim] = { 1, 1.5, 10, 10, 2, 1, 2 };
 

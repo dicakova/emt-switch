@@ -1,9 +1,8 @@
 #include <TH1.h>
 #include <TH2.h>
-void Draw(Int_t projection = 2, Int_t cut = 3, Bool_t is2D = kFALSE,
+void Draw(Int_t projection = 2, Int_t cut = 3,Double_t *cuts=0, Bool_t is2D = kFALSE,
 		Bool_t save = kFALSE,const char *inputFileName="histogram.root") {
 	gROOT->LoadMacro("EmtMatrix.cxx+");
-
 
 	TFile *f = TFile::Open(inputFileName,"READ");
 	if (!f) return;
@@ -11,15 +10,39 @@ void Draw(Int_t projection = 2, Int_t cut = 3, Bool_t is2D = kFALSE,
 	THn *hs = (THn*) f->Get("hs");
 	if (!hs) return;
 
+	if (!cuts) {
+		cuts = new Double_t[hs->GetNdimensions()-1];
+		cuts[0] = 0.0; // r0x
+		cuts[1] = 0.0; // r0y
+		cuts[2] = 0.0; // nu01
+		cuts[3] = 0.0; // nu10
+		cuts[4] = 0.0; // mxy
+		cuts[5] = 0.0; // myx
+	}
+
 	TH1::AddDirectory(kFALSE);
 
+	// Setting up fixed parameters
+	for (Int_t iCut =0; iCut < hs->GetNdimensions()-1; iCut++) {
+		if (iCut == projection) continue;
+		if (iCut == cut) continue;
+		if (hs->GetAxis(iCut)->GetNbins()<2) continue;
+		Printf("Cutting at cuts[%d]=%f",iCut,cuts[iCut]);
+		Int_t mybin = hs->GetAxis(iCut)->FindBin(cuts[iCut]);
+		hs->GetAxis(iCut)->SetRange(mybin, mybin);
+	}
+
+
 	if (!is2D) {
+		// REAL
+		hs->GetAxis(6)->SetRange(1, 1);
 		// IMAGINARY
-		hs->GetAxis(6)->SetRange(2, 2);
+        // hs->GetAxis(6)->SetRange(2, 2);
+
 		TCanvas *c1 = new TCanvas();
 		for (Int_t i = 1; i <= hs->GetAxis(cut)->GetNbins(); i++) {
 			hs->GetAxis(cut)->SetRange(i, i);
-			hs->GetAxis(6)->SetRange(1, 1);
+
 			TH1 * histNu01 = hs->Projection(projection);
 			histNu01->SetStats(0);
 			histNu01->SetTitle(
